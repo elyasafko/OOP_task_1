@@ -7,10 +7,8 @@ public class Pawn extends ConcretePiece
         this.type = "♟";
         this.KillCount = 0;
     }
-
     public void AddKillCount()
     {
         KillCount++;
     }
-
 }

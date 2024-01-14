@@ -2,11 +2,21 @@ public class ConcretePlayer implements Player
 {
     private boolean isPlayerOne=true;
     private int wins=0;
+    private int picesRemain;
 
 
-    public ConcretePlayer(boolean isPlayerOne)
+    public ConcretePlayer(boolean isPlayerOne, int picesRemain)
     {
         this.isPlayerOne = isPlayerOne;
+        this.picesRemain = picesRemain;
+    }
+    public int getPicesRemain()
+    {
+        return picesRemain;
+    }
+    public void setPicesRemain()
+    {
+        this.picesRemain --;
     }
     @Override
     public boolean isPlayerOne()
