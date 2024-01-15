@@ -2,7 +2,7 @@ public class GameLogic implements PlayableLogic
 {
     int boardSize = 11;
     boolean isSecondPlayerTurn = false;
-    Piece[][] board = new Piece[boardSize][boardSize];
+    ConcretePiece[][] board = new ConcretePiece[boardSize][boardSize];
     ConcretePlayer playerOne = new ConcretePlayer(true,13);
     ConcretePlayer playerTwo = new ConcretePlayer(false,24);
 
@@ -78,12 +78,23 @@ public class GameLogic implements PlayableLogic
         }
         //swap turns
         isSecondPlayerTurn = !isSecondPlayerTurn;
+        // update the step counter
+        board[b.getColumn()][b.getRow()].setStepCounter(calculateSteps(a,b));
         // move the piece
         board[b.getColumn()][b.getRow()] = board[a.getColumn()][a.getRow()];
         board[a.getColumn()][a.getRow()] = null;
         // return true if the move was successful
         return true;
     }
+
+    private int calculateSteps(Position a, Position b)
+    {
+        if (a.getRow()==b.getRow())
+            return Math.abs(a.getColumn()-b.getColumn());
+        else
+            return Math.abs(a.getRow()-b.getRow());
+    }
+
     @Override
     public Piece getPieceAtPosition(Position position)
     {
@@ -134,7 +145,7 @@ public class GameLogic implements PlayableLogic
     @Override
     public void reset()
     {
-        board = new Piece[boardSize][boardSize];
+        board = new ConcretePiece[boardSize][boardSize];
         //Pawns
         for(int i = 3; i <= 7; i++)
         {
