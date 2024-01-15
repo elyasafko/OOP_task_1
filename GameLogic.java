@@ -106,11 +106,22 @@ public class GameLogic implements PlayableLogic
     public boolean isGameFinished()
     {
         //check if one of the players has no pieces left.
-        if (playerOne.getPicesRemain() == 0 || playerTwo.getPicesRemain() == 0)
+        if (playerOne.getPicesRemain() == 0)
+        {
+            playerTwo.addWin();
             return true;
+        }
+        if (playerTwo.getPicesRemain() == 0)
+        {
+            playerOne.addWin();
+            return true;
+        }
         //check if the king reach the corner.
         else if (board[0][0] instanceof King || board[0][10] instanceof King || board[10][0] instanceof King || board[10][10] instanceof King)
+        {
+            playerOne.addWin();
             return true;
+        }
         return false;
     }
 
