@@ -79,7 +79,7 @@ public class GameLogic implements PlayableLogic
         //swap turns
         isSecondPlayerTurn = !isSecondPlayerTurn;
         // update the step counter
-        board[b.getColumn()][b.getRow()].setStepCounter(calculateSteps(a,b));
+        board[a.getColumn()][a.getRow()].setStepCounter(calculateSteps(a,b));
         // move the piece
         board[b.getColumn()][b.getRow()] = board[a.getColumn()][a.getRow()];
         board[a.getColumn()][a.getRow()] = null;
