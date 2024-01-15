@@ -4,7 +4,10 @@ public class Pawn extends ConcretePiece
     public Pawn(Player owner)
     {
         super(owner);
-        this.type = "♟";
+        if(owner.isPlayerOne())
+            this.type = "♙";
+        else
+            this.type = "♟";
         this.KillCount = 0;
     }
     public void AddKillCount()
