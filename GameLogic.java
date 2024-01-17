@@ -1,7 +1,7 @@
 public class GameLogic implements PlayableLogic
 {
     int boardSize = 11;
-    boolean isSecondPlayerTurn = false;
+    boolean isSecondPlayerTurn = true;
     ConcretePiece[][] board = new ConcretePiece[boardSize][boardSize];
     ConcretePlayer playerOne = new ConcretePlayer(true,13);
     ConcretePlayer playerTwo = new ConcretePlayer(false,24);
@@ -17,7 +17,7 @@ public class GameLogic implements PlayableLogic
             return false;
         if(board[b.getColumn()][b.getRow()] != null)
             return false;
-        if (board[a.getColumn()][a.getRow()].getOwner().isPlayerOne() != isSecondPlayerTurn)
+        if (board[a.getColumn()][a.getRow()].getOwner().isPlayerOne() == isSecondPlayerTurn)
             return false;
         if (board[a.getColumn()][a.getRow()] instanceof Pawn)
         {
@@ -118,9 +118,33 @@ public class GameLogic implements PlayableLogic
                     ((Pawn) board[X-2][Y]).AddKillCount();
                 }
             }
+            else if (board[X - 1][Y] instanceof King)
+            {
+                Position c = new Position(X - 1, Y);
+               if (kingCheckSurrounding(c))
+               {
+                   playerTwo.addWin();
+                   reset();
+               }
+            }
         }
     }
 
+    private boolean kingCheckSurrounding(Position c)
+    {
+
+        /*
+        need to fix the out of range problem
+         */
+        int X = c.getColumn();
+        int Y = c.getRow();
+        // check if the king is surrounded by attackers and a wall
+        if (board[X][Y+1] != null && (board[X][Y+1].getOwner() == playerTwo || X==10))
+            if (Y==10 || board[X-1][Y].getOwner() == playerTwo)
+                if (X==0 || board[X][Y-1].getOwner() == playerTwo )
+                    return true;
+        return false;
+    }
     private int calculateSteps(Position a, Position b)
     {
         if (a.getRow()==b.getRow())
@@ -151,12 +175,12 @@ public class GameLogic implements PlayableLogic
     public boolean isGameFinished()
     {
         //check if one of the players has no pieces left.
-        if (playerOne.getPicesRemain() == 0)
+        if (playerOne.getPiecesRemain() == 0)
         {
             playerTwo.addWin();
             return true;
         }
-        if (playerTwo.getPicesRemain() == 0)
+        if (playerTwo.getPiecesRemain() == 0)
         {
             playerOne.addWin();
             return true;

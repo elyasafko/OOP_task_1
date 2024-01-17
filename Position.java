@@ -2,13 +2,11 @@ public class Position
 {
     private int row;
     private int column;
-    private boolean[] BeenThereDoneThat;
 
     public Position(int column, int row)
     {
         this.row = row;
         this.column = column;
-        this.BeenThereDoneThat = new boolean[36];
     }
 
     public int getRow()
