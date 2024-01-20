@@ -1,5 +1,29 @@
 import java.util.ArrayList;
 
+
+/*
+
+
+
+
+this class should be an abstract class, and the concrete pieces should extend it
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+* */
+
+
+
+
 public abstract class ConcretePiece implements Piece
 {
     final protected Player owner;
