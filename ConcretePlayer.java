@@ -27,7 +27,7 @@ public class ConcretePlayer implements Player
     @Override
     public int getWins()
     {
-        return wins;
+        return this.wins;
     }
     public void addWin()
     {

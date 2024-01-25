@@ -29,10 +29,8 @@ public class Position
     {
         return this.row == other.row && this.column == other.column;
     }
-
     public String toString()
     {
         return "(" + row + ", " + column + ")";
     }
-
 }

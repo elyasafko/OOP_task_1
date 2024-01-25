@@ -26,9 +26,4 @@ public class Pawn extends ConcretePiece
         return IsALive;
     }
 
-
-
-
-
-
 }

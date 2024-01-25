@@ -11,10 +11,7 @@ public class GameLogic implements PlayableLogic
     //lifo stack for the undo contains concrete pieces that represent the move order if a piece is being killed it will be added to the end of the queue before the killer
     Stack<ConcretePiece> MoveOrder = new Stack<ConcretePiece>();
 
-    public GameLogic()
-    {
-        reset();
-    }
+    public GameLogic() {reset();}
     @Override
     public boolean move(Position a, Position b)
     {
@@ -290,10 +287,10 @@ public class GameLogic implements PlayableLogic
                 }
             }
         }
-
     }
 
-    private boolean kingCheckSurrounding(Position c){
+    private boolean kingCheckSurrounding(Position c)
+    {
         //make instance for every side position
         Position up = new Position(c.getColumn(),c.getRow()+1);
         Position down = new Position(c.getColumn(),c.getRow()-1);
@@ -305,7 +302,8 @@ public class GameLogic implements PlayableLogic
             return true;
         return false;
     }
-    private boolean check_side_for_king(Position d){
+    private boolean check_side_for_king(Position d)
+    {
         //check if outside the board
         if (d.getColumn() < 0 || d.getColumn() > 10 || d.getRow() < 0 || d.getRow() > 10)
             return true;
@@ -328,25 +326,12 @@ public class GameLogic implements PlayableLogic
         else
             return Math.abs(a.getRow()-b.getRow());
     }
-
     @Override
-    public Piece getPieceAtPosition(Position position)
-    {
-        return board[position.getColumn()][position.getRow()];
-    }
-
+    public Piece getPieceAtPosition(Position position) {return board[position.getColumn()][position.getRow()];}
     @Override
-    public Player getFirstPlayer()
-    {
-        return playerOne;
-    }
-
+    public Player getFirstPlayer() {return playerOne;}
     @Override
-    public Player getSecondPlayer()
-    {
-        return playerTwo;
-    }
-
+    public Player getSecondPlayer() {return playerTwo;}
     @Override
     public boolean isGameFinished()
     {
@@ -422,7 +407,8 @@ public class GameLogic implements PlayableLogic
     }
 
     @Override
-    public void undoLastMove() {
+    public void undoLastMove()
+    {
         //check if the move order is empty
         if (MoveOrder.isEmpty())
             return;
@@ -430,6 +416,8 @@ public class GameLogic implements PlayableLogic
         ConcretePiece lastMove = MoveOrder.pop();
         Position thisPosition = lastMove.MovesHistory.getLast();
         Position lastPosition = lastMove.MovesHistory.get(lastMove.MovesHistory.size()-2);
+
+        isSecondPlayerTurn = !isSecondPlayerTurn;
 
         //check if the last move was a kill if so keep checking until you find a piece that is alive
         if (lastMove instanceof Pawn && !MoveOrder.isEmpty()){
@@ -523,13 +511,12 @@ public class GameLogic implements PlayableLogic
    // this one does not cover the option of invalid input: diagonal pieces and same location!!!!!!!!!!
 
 
-
     @Override
     public int getBoardSize()
     {
         return boardSize;
     }
-    }
+}
 
 
 //todo: invalid input to the undo function - handel it
