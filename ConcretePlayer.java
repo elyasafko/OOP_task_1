@@ -5,6 +5,7 @@ public class ConcretePlayer implements Player
     private int piecesRemain;
 
 
+
     public ConcretePlayer(boolean isPlayerOne, int picesRemain)
     {
         this.isPlayerOne = isPlayerOne;

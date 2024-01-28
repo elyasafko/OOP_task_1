@@ -10,6 +10,7 @@ public class GameLogic implements PlayableLogic
     ConcretePlayer playerTwo = new ConcretePlayer(false,24);
     //lifo stack for the undo contains concrete pieces that represent the move order if a piece is being killed it will be added to the end of the queue before the killer
     Stack<ConcretePiece> MoveOrder = new Stack<ConcretePiece>();
+    ArrayList<ConcretePiece> piecesList = new ArrayList<ConcretePiece>();
 
     public GameLogic() {reset();}
     @Override
@@ -91,9 +92,9 @@ public class GameLogic implements PlayableLogic
 
         // add the piece to the move order
         MoveOrder.push(board[b.getColumn()][b.getRow()]);
-        System.out.println(MoveOrder.peek());
+        //System.out.println(MoveOrder.peek().getID() + " is the last piece that moved");
         // add the move to the piece history
-        board[b.getColumn()][b.getRow()].MovesHistory.add(b);
+        //board[b.getColumn()][b.getRow()].MovesHistory.add(b);
 
         // return true if the move was successful
         return true;
@@ -104,8 +105,9 @@ public class GameLogic implements PlayableLogic
         int X = b.getColumn();
         int Y = b.getRow();
         //check left
-        if ((X != 0) && (board[X - 1][Y]!= null) &&(board[X - 1][Y].getOwner() != board[X][Y].getOwner()))
+        if ((X != 0) && (board[X - 1][Y]!= null) && (board[X - 1][Y].getOwner() != board[X][Y].getOwner()))
         {
+            System.out.println("Left");
             //check if the piece is a pawn
             if (board[X - 1][Y] instanceof Pawn)
             {
@@ -118,7 +120,7 @@ public class GameLogic implements PlayableLogic
                     ((Pawn) board[X][Y]).AddKillCount();
                 }
                 // check if we close to a corner
-                else if (X == 2 && (Y == 0) || (X == 10))
+                else if ((X == 2 && (Y == 0 || Y == 10)))
                 {
                     MoveOrder.push(board[X - 1][Y]);
                     ((Pawn)board[X - 1][Y]).setALive(false);
@@ -145,13 +147,13 @@ public class GameLogic implements PlayableLogic
                    //add win reset the game and change the turn
                    playerTwo.addWin();
                    reset();
-                   isSecondPlayerTurn = !isSecondPlayerTurn;/////////////////////////////////////////////////////////////////////
                }
             }
         }
         //check right
         if ((X != 10) && (board[X + 1][Y]!= null) &&(board[X + 1][Y].getOwner() != board[X][Y].getOwner()))
         {
+            System.out.println("Right");
             //check if the piece is a pawn
             if (board[X + 1][Y] instanceof Pawn)
             {
@@ -164,7 +166,7 @@ public class GameLogic implements PlayableLogic
                     ((Pawn) board[X][Y]).AddKillCount();
                 }
                 // check if we close to a corner
-                else if (X == 8 && (Y == 0) || (X == 10))
+                else if (X == 8 && ((Y == 0) || (Y == 10)))
                 {
                     MoveOrder.push(board[X + 1][Y]);
                     ((Pawn)board[X + 1][Y]).setALive(false);
@@ -191,59 +193,13 @@ public class GameLogic implements PlayableLogic
                     //add win reset the game and change the turn
                     playerTwo.addWin();
                     reset();
-                    isSecondPlayerTurn = !isSecondPlayerTurn;////////////////////////////////////////////////////////////////////////////////
                 }
             }
         }
         //check up
-        if ((Y != 10) && (board[X][Y + 1]!= null) &&(board[X][Y + 1].getOwner() != board[X][Y].getOwner()))
-        {
-            //check if the piece is a pawn
-            if (board[X][Y + 1] instanceof Pawn)
-            {
-                // check if we close to a wall
-                if (Y == 9)
-                {
-                    MoveOrder.push(board[X][Y + 1]);
-                    ((Pawn)board[X][Y + 1]).setALive(false);
-                    board[X][Y + 1] = null;
-                    ((Pawn) board[X][Y]).AddKillCount();
-                }
-                // check if we close to a corner
-                else if (Y == 8 && (X == 0) || (Y == 10))
-                {
-                    MoveOrder.push(board[X][Y + 1]);
-                    ((Pawn)board[X][Y + 1]).setALive(false);
-                    board[X][Y + 1] = null;
-                    ((Pawn) board[X][Y]).AddKillCount();
-                }
-                //add kill counts and remove the killed piece
-                else if (((board[X][Y + 2]!= null)) && (board[X][Y + 2].getOwner() == board[X][Y].getOwner()) && (board[X][Y + 2] instanceof Pawn))
-                {
-                    MoveOrder.push(board[X][Y + 1]);
-                    ((Pawn)board[X][Y +1 ]).setALive(false);
-                    board[X][Y + 1] = null;
-                    ((Pawn) board[X][Y]).AddKillCount();
-                    ((Pawn) board[X][Y+2]).AddKillCount();
-                }
-            }
-            //if the piece is a king
-            else if (board[X][Y + 1] instanceof King)
-            {
-                Position c = new Position(X, Y + 1);
-                //check if the king is surrounded
-                if (kingCheckSurrounding(c)) ///////////////////////////////////////////////////////////////////////////////
-                {
-                    //add win reset the game and change the turn
-                    playerTwo.addWin();
-                    reset();
-                    isSecondPlayerTurn = !isSecondPlayerTurn;
-                }
-            }
-        }
-        //check down
         if ((Y != 0) && (board[X][Y - 1]!= null) &&(board[X][Y - 1].getOwner() != board[X][Y].getOwner()))
         {
+            System.out.println("Up");
             //check if the piece is a pawn
             if (board[X][Y - 1] instanceof Pawn)
             {
@@ -256,7 +212,7 @@ public class GameLogic implements PlayableLogic
                     ((Pawn) board[X][Y]).AddKillCount();
                 }
                 // check if we close to a corner
-                else if (Y == 2 && (X == 0) || (Y == 10))
+                else if (Y == 2 && ((X == 0) || (X == 10)))
                 {
                     MoveOrder.push(board[X][Y - 1]);
                     ((Pawn)board[X][Y - 1]).setALive(false);
@@ -270,12 +226,13 @@ public class GameLogic implements PlayableLogic
                     ((Pawn)board[X][Y - 1]).setALive(false);
                     board[X][Y - 1] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
-                    ((Pawn) board[X][Y-2]).AddKillCount();
+                    ((Pawn) board[X][Y - 2]).AddKillCount();
                 }
             }
             //if the piece is a king
             else if (board[X][Y - 1] instanceof King)
             {
+                System.out.println("King");
                 Position c = new Position(X, Y - 1);
                 //check if the king is surrounded
                 if (kingCheckSurrounding(c))
@@ -283,7 +240,55 @@ public class GameLogic implements PlayableLogic
                     //add win reset the game and change the turn
                     playerTwo.addWin();
                     reset();
-                    isSecondPlayerTurn = !isSecondPlayerTurn;
+                }
+            }
+        }
+        //check down
+        if ((Y != 10) && (board[X][Y + 1]!= null) && (board[X][Y + 1].getOwner() != board[X][Y].getOwner()))
+        {
+            System.out.println("Down");
+            //check if the piece is a pawn
+            if (board[X][Y + 1] instanceof Pawn)
+            {
+                // check if we close to a wall
+                if (Y == 9)
+                {
+                    System.out.println("1");
+                    MoveOrder.push(board[X][Y + 1]);
+                    ((Pawn)board[X][Y + 1]).setALive(false);
+                    board[X][Y + 1] = null;
+                    ((Pawn) board[X][Y]).AddKillCount();
+                }
+                // check if we close to a corner
+                else if (Y == 8 && ((X == 0) || (X == 10)))
+                {
+                    System.out.println("2");
+                    MoveOrder.push(board[X][Y + 1]);
+                    ((Pawn)board[X][Y + 1]).setALive(false);
+                    board[X][Y + 1] = null;
+                    ((Pawn) board[X][Y]).AddKillCount();
+                }
+                //add kill counts and remove the killed piece
+                else if (((board[X][Y + 2]!= null)) && (board[X][Y + 2].getOwner() == board[X][Y].getOwner()) && (board[X][Y + 2] instanceof Pawn))
+                {
+                    System.out.println("3");
+                    MoveOrder.push(board[X][Y + 1]);
+                    ((Pawn)board[X][Y + 1]).setALive(false);
+                    board[X][Y + 1] = null;
+                    ((Pawn) board[X][Y]).AddKillCount();
+                    ((Pawn) board[X][Y + 2]).AddKillCount();
+                }
+            }
+            //if the piece is a king
+            else if (board[X][Y + 1] instanceof King)
+            {
+                Position c = new Position(X, Y + 1);
+                //check if the king is surrounded
+                if (kingCheckSurrounding(c))
+                {
+                    //add win reset the game and change the turn
+                    playerTwo.addWin();
+                    reset();
                 }
             }
         }
@@ -306,16 +311,24 @@ public class GameLogic implements PlayableLogic
     {
         //check if outside the board
         if (d.getColumn() < 0 || d.getColumn() > 10 || d.getRow() < 0 || d.getRow() > 10)
+        {
             return true;
+        }
         //if corner return true
         else if (d.getColumn() == 0 && d.getRow() == 0 || d.getColumn() == 10 && d.getRow() == 0 || d.getColumn() == 10 && d.getRow() == 10 || d.getColumn() == 0 && d.getRow() == 10)
+        {
             return true;
+        }
         //check if there is a piece
         else if (board[d.getColumn()][d.getRow()] == null)
+        {
             return false;
+        }
         //if attacker return true
         else if (board[d.getColumn()][d.getRow()].getOwner() == playerTwo)
+        {
             return true;
+        }
         return false;
 
     }
@@ -339,71 +352,121 @@ public class GameLogic implements PlayableLogic
         if (playerOne.getPiecesRemain() == 0)
         {
             playerTwo.addWin();
+            printFinish();
             return true;
         }
         if (playerTwo.getPiecesRemain() == 0)
         {
             playerOne.addWin();
+            printFinish();
             return true;
         }
         //check if the king reach the corner.
         else if (board[0][0] instanceof King || board[0][10] instanceof King || board[10][0] instanceof King || board[10][10] instanceof King)
         {
             playerOne.addWin();
+            printFinish();
             return true;
         }
         return false;
     }
 
     @Override
-    public boolean isSecondPlayerTurn()
-    {
-        return isSecondPlayerTurn;
-    }
+    public boolean isSecondPlayerTurn() {return isSecondPlayerTurn;}
 
     @Override
     public void reset()
     {
         board = new ConcretePiece[boardSize][boardSize];
-        //Pawns
-        for(int i = 3; i <= 7; i++)
-        {
-            //Attackers
-            board[0][i] = new Pawn(playerTwo);
-            board[0][i].MovesHistory.add(new Position(0,i));
-            board[10][i] = new Pawn(playerTwo);
-            board[10][i].MovesHistory.add(new Position(10,i));
-            board[i][0] = new Pawn(playerTwo);
-            board[i][0].MovesHistory.add(new Position(i,0));
-            board[i][10] = new Pawn(playerTwo);
-            board[i][10].MovesHistory.add(new Position(i,10));
-            //Defenders
-            board[5][i] = new Pawn(playerOne);
-            board[5][i].MovesHistory.add(new Position(5,i));
-            board[i][5] = new Pawn(playerOne);
-            board[i][5].MovesHistory.add(new Position(i,5));
-        }
+        isSecondPlayerTurn = true;
+
         //King
-        board[5][5] = new King(playerOne);
+        board[5][5] = new King(playerOne,"k7");
         board[5][5].MovesHistory.add(new Position(5,5));
+        piecesList.add(board[5][5]);
         //Defenders
-        board[4][6] = new Pawn(playerOne);
-        board[4][6].MovesHistory.add(new Position(4,6));
-        board[6][4] = new Pawn(playerOne);
-        board[6][4].MovesHistory.add(new Position(6,4));
-        board[4][4] = new Pawn(playerOne);
+        board[5][3] = new Pawn(playerOne, "D1");
+        board[5][3].MovesHistory.add(new Position(5,3));
+        piecesList.add(board[5][3]);
+        board[4][4] = new Pawn(playerOne, "D2");
         board[4][4].MovesHistory.add(new Position(4,4));
-        board[6][6] = new Pawn(playerOne);
+        board[5][4] = new Pawn(playerOne, "D3");
+        board[5][4].MovesHistory.add(new Position(5,4));
+        board[6][4] = new Pawn(playerOne, "D4");
+        board[6][4].MovesHistory.add(new Position(6,4));
+        board[3][5] = new Pawn(playerOne, "D5");
+        board[3][5].MovesHistory.add(new Position(3,5));
+        board[4][5] = new Pawn(playerOne, "D6");
+        board[4][5].MovesHistory.add(new Position(4,5));
+        board[6][5] = new Pawn(playerOne, "D8");
+        board[6][5].MovesHistory.add(new Position(6,5));
+        board[7][5] = new Pawn(playerOne, "D9");
+        board[7][5].MovesHistory.add(new Position(7,5));
+        board[4][6] = new Pawn(playerOne, "D10");
+        board[4][6].MovesHistory.add(new Position(4,6));
+        board[5][6] = new Pawn(playerOne, "D11");
+        board[5][6].MovesHistory.add(new Position(5,6));
+        board[6][6] = new Pawn(playerOne, "D12");
+        board[6][6].MovesHistory.add(new Position(6,6));
+        board[5][7] = new Pawn(playerOne, "D13");
+        board[5][7].MovesHistory.add(new Position(5,7));
+        board[4][6] = new Pawn(playerOne,"D10");
+        board[4][6].MovesHistory.add(new Position(4,6));
+        board[6][4] = new Pawn(playerOne,"D4");
+        board[6][4].MovesHistory.add(new Position(6,4));
+        board[4][4] = new Pawn(playerOne,"D2");
+        board[4][4].MovesHistory.add(new Position(4,4));
+        board[6][6] = new Pawn(playerOne,"D12");
         board[6][6].MovesHistory.add(new Position(6,6));
         //Attackers
-        board[1][5] = new Pawn(playerTwo);
-        board[1][5].MovesHistory.add(new Position(1,5));
-        board[5][1] = new Pawn(playerTwo);
+        board[3][0] = new Pawn(playerTwo,"A1");
+        board[3][0].MovesHistory.add(new Position(3,0));
+        board[4][0] = new Pawn(playerTwo,"A2");
+        board[4][0].MovesHistory.add(new Position(4,0));
+        board[5][0] = new Pawn(playerTwo,"A3");
+        board[5][0].MovesHistory.add(new Position(5,0));
+        board[6][0] = new Pawn(playerTwo,"A4");
+        board[6][0].MovesHistory.add(new Position(6,0));
+        board[7][0] = new Pawn(playerTwo,"A5");
+        board[7][0].MovesHistory.add(new Position(7,0));
+        board[5][1] = new Pawn(playerTwo,"A6");
         board[5][1].MovesHistory.add(new Position(5,1));
-        board[5][9] = new Pawn(playerTwo);
-        board[5][9].MovesHistory.add(new Position(5,9));
-        board[9][5] = new Pawn(playerTwo);
+        board[0][3] = new Pawn(playerTwo,"A7");
+        board[0][3].MovesHistory.add(new Position(0,3));
+        board[10][3] = new Pawn(playerTwo,"A8");
+        board[10][3].MovesHistory.add(new Position(10,3));
+        board[0][4] = new Pawn(playerTwo,"A9");
+        board[0][4].MovesHistory.add(new Position(0,4));
+        board[10][4] = new Pawn(playerTwo,"A10");
+        board[10][4].MovesHistory.add(new Position(10,4));
+        board[0][5] = new Pawn(playerTwo,"A11");
+        board[0][5].MovesHistory.add(new Position(0,5));
+        board[1][5] = new Pawn(playerTwo,"A12");
+        board[1][5].MovesHistory.add(new Position(1,5));
+        board[9][5] = new Pawn(playerTwo,"A13");
         board[9][5].MovesHistory.add(new Position(9,5));
+        board[10][5] = new Pawn(playerTwo,"A14");
+        board[10][5].MovesHistory.add(new Position(10,5));
+        board[0][6] = new Pawn(playerTwo,"A15");
+        board[0][6].MovesHistory.add(new Position(0,6));
+        board[10][6] = new Pawn(playerTwo,"A16");
+        board[10][6].MovesHistory.add(new Position(10,6));
+        board[0][7] = new Pawn(playerTwo,"A17");
+        board[0][7].MovesHistory.add(new Position(0,7));
+        board[10][7] = new Pawn(playerTwo,"A18");
+        board[10][7].MovesHistory.add(new Position(10,7));
+        board[5][9] = new Pawn(playerTwo,"A19");
+        board[5][9].MovesHistory.add(new Position(5,9));
+        board[3][10] = new Pawn(playerTwo,"A20");
+        board[3][10].MovesHistory.add(new Position(3,10));
+        board[4][10] = new Pawn(playerTwo,"A21");
+        board[4][10].MovesHistory.add(new Position(4,10));
+        board[5][10] = new Pawn(playerTwo,"A22");
+        board[5][10].MovesHistory.add(new Position(5,10));
+        board[6][10] = new Pawn(playerTwo,"A23");
+        board[6][10].MovesHistory.add(new Position(6,10));
+        board[7][10] = new Pawn(playerTwo,"A24");
+        board[7][10].MovesHistory.add(new Position(7,10));
     }
 
     @Override
@@ -515,6 +578,15 @@ public class GameLogic implements PlayableLogic
     public int getBoardSize()
     {
         return boardSize;
+    }
+    public void printFinish()
+    {
+        piecesList.sort(new movesComparator());
+        //need to add win and lose prints
+        for (ConcretePiece piece : piecesList)
+        {
+            System.out.println(piece.getID() + " " + piece.MovesHistory.toString());
+        }
     }
 }
 
