@@ -10,7 +10,7 @@ public abstract class ConcretePiece implements Piece
 {
     final protected Player owner;
     protected String type;
-    private String ID;
+    private final String ID;
     protected int StepCounter;
     protected ArrayList<Position> MovesHistory;
 
@@ -48,7 +48,7 @@ public abstract class ConcretePiece implements Piece
     {
         this.StepCounter -= steps;
     }
-
+    public int getKillCount() {return 0;}
 }
 
 
@@ -64,6 +64,20 @@ class movesComparator implements Comparator<ConcretePiece>
         int aa = Integer.parseInt(a.getID().substring(1));
         int bb = Integer.parseInt(b.getID().substring(1));
         return aa - bb;
+    }
+}
+class killComparator implements Comparator<ConcretePiece>
+{
+    public int compare(ConcretePiece a, ConcretePiece b)
+    {
+        int aa = Integer.parseInt(a.getID().substring(1));
+        int bb = Integer.parseInt(b.getID().substring(1));
+
+        if(a.getKillCount()!=b.getKillCount())
+            return b.getKillCount() - a.getKillCount();
+        if (aa != bb)
+            return aa - bb;
+        return 0;
     }
 }
 class disComparator implements Comparator<ConcretePiece>
