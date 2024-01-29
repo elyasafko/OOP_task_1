@@ -39,9 +39,14 @@ public abstract class ConcretePiece implements Piece
     {
         return this.StepCounter;
     }
-    public void setStepCounter(int steps)
+    public void addStepCounter(int steps)
     {
         this.StepCounter += steps;
+    }
+
+    public void subStepCounter(int steps)
+    {
+        this.StepCounter -= steps;
     }
 
 }
