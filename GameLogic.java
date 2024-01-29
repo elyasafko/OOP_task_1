@@ -73,8 +73,12 @@ public class GameLogic implements PlayableLogic {
         board[a.getColumn()][a.getRow()] = null;
         // kill check
         if (board[b.getColumn()][b.getRow()] instanceof Pawn) {
-            if (kill(b))
+            if (kill(b)) {
+                printFinish();
+                playerTwo.addWin();
+                reset();
                 return true;
+            }
         }
 
         // add the piece to the move order
@@ -123,9 +127,6 @@ public class GameLogic implements PlayableLogic {
                 Position c = new Position(X - 1, Y);
                 //check if the king is surrounded
                 if (kingCheckSurrounding(c)) {
-                    //add win reset the game and change the turn
-                    playerTwo.addWin();
-                    reset();
                     return true;
                 }
             }
@@ -163,9 +164,6 @@ public class GameLogic implements PlayableLogic {
                 Position c = new Position(X + 1, Y);
                 //check if the king is surrounded
                 if (kingCheckSurrounding(c)) {
-                    //add win reset the game and change the turn
-                    playerTwo.addWin();
-                    reset();
                     return true;
                 }
             }
@@ -204,9 +202,6 @@ public class GameLogic implements PlayableLogic {
                 Position c = new Position(X, Y - 1);
                 //check if the king is surrounded
                 if (kingCheckSurrounding(c)) {
-                    //add win reset the game and change the turn
-                    playerTwo.addWin();
-                    reset();
                     return true;
                 }
             }
@@ -244,9 +239,6 @@ public class GameLogic implements PlayableLogic {
                 Position c = new Position(X, Y + 1);
                 //check if the king is surrounded
                 if (kingCheckSurrounding(c)) {
-                    //add win reset the game and change the turn
-                    playerTwo.addWin();
-                    reset();
                     return true;
                 }
             }
@@ -352,83 +344,111 @@ public class GameLogic implements PlayableLogic {
         piecesList.add(board[5][3]);
         board[4][4] = new Pawn(playerOne, "D2");
         board[4][4].MovesHistory.add(new Position(4, 4));
+        piecesList.add(board[4][4]);
         board[5][4] = new Pawn(playerOne, "D3");
         board[5][4].MovesHistory.add(new Position(5, 4));
+        piecesList.add(board[5][4]);
         board[6][4] = new Pawn(playerOne, "D4");
         board[6][4].MovesHistory.add(new Position(6, 4));
+        piecesList.add(board[6][4]);
         board[3][5] = new Pawn(playerOne, "D5");
         board[3][5].MovesHistory.add(new Position(3, 5));
+        piecesList.add(board[3][5]);
         board[4][5] = new Pawn(playerOne, "D6");
         board[4][5].MovesHistory.add(new Position(4, 5));
+        piecesList.add(board[4][5]);
         board[6][5] = new Pawn(playerOne, "D8");
         board[6][5].MovesHistory.add(new Position(6, 5));
+        piecesList.add(board[6][5]);
         board[7][5] = new Pawn(playerOne, "D9");
         board[7][5].MovesHistory.add(new Position(7, 5));
+        piecesList.add(board[7][5]);
         board[4][6] = new Pawn(playerOne, "D10");
         board[4][6].MovesHistory.add(new Position(4, 6));
+        piecesList.add(board[4][6]);
         board[5][6] = new Pawn(playerOne, "D11");
         board[5][6].MovesHistory.add(new Position(5, 6));
+        piecesList.add(board[5][6]);
         board[6][6] = new Pawn(playerOne, "D12");
         board[6][6].MovesHistory.add(new Position(6, 6));
+        piecesList.add(board[6][6]);
         board[5][7] = new Pawn(playerOne, "D13");
         board[5][7].MovesHistory.add(new Position(5, 7));
-        board[4][6] = new Pawn(playerOne, "D10");
-        board[4][6].MovesHistory.add(new Position(4, 6));
-        board[6][4] = new Pawn(playerOne, "D4");
-        board[6][4].MovesHistory.add(new Position(6, 4));
-        board[4][4] = new Pawn(playerOne, "D2");
-        board[4][4].MovesHistory.add(new Position(4, 4));
-        board[6][6] = new Pawn(playerOne, "D12");
-        board[6][6].MovesHistory.add(new Position(6, 6));
+        piecesList.add(board[5][7]);
+
         //Attackers
         board[3][0] = new Pawn(playerTwo, "A1");
         board[3][0].MovesHistory.add(new Position(3, 0));
+        piecesList.add(board[3][0]);
         board[4][0] = new Pawn(playerTwo, "A2");
         board[4][0].MovesHistory.add(new Position(4, 0));
+        piecesList.add(board[4][0]);
         board[5][0] = new Pawn(playerTwo, "A3");
         board[5][0].MovesHistory.add(new Position(5, 0));
+        piecesList.add(board[5][0]);
         board[6][0] = new Pawn(playerTwo, "A4");
         board[6][0].MovesHistory.add(new Position(6, 0));
+        piecesList.add(board[6][0]);
         board[7][0] = new Pawn(playerTwo, "A5");
         board[7][0].MovesHistory.add(new Position(7, 0));
+        piecesList.add(board[7][0]);
         board[5][1] = new Pawn(playerTwo, "A6");
         board[5][1].MovesHistory.add(new Position(5, 1));
+        piecesList.add(board[5][1]);
         board[0][3] = new Pawn(playerTwo, "A7");
         board[0][3].MovesHistory.add(new Position(0, 3));
+        piecesList.add(board[0][3]);
         board[10][3] = new Pawn(playerTwo, "A8");
         board[10][3].MovesHistory.add(new Position(10, 3));
+        piecesList.add(board[10][3]);
         board[0][4] = new Pawn(playerTwo, "A9");
         board[0][4].MovesHistory.add(new Position(0, 4));
+        piecesList.add(board[0][4]);
         board[10][4] = new Pawn(playerTwo, "A10");
         board[10][4].MovesHistory.add(new Position(10, 4));
+        piecesList.add(board[10][4]);
         board[0][5] = new Pawn(playerTwo, "A11");
         board[0][5].MovesHistory.add(new Position(0, 5));
+        piecesList.add(board[0][5]);
         board[1][5] = new Pawn(playerTwo, "A12");
         board[1][5].MovesHistory.add(new Position(1, 5));
+        piecesList.add(board[1][5]);
         board[9][5] = new Pawn(playerTwo, "A13");
         board[9][5].MovesHistory.add(new Position(9, 5));
+        piecesList.add(board[9][5]);
         board[10][5] = new Pawn(playerTwo, "A14");
         board[10][5].MovesHistory.add(new Position(10, 5));
+        piecesList.add(board[10][5]);
         board[0][6] = new Pawn(playerTwo, "A15");
         board[0][6].MovesHistory.add(new Position(0, 6));
+        piecesList.add(board[0][6]);
         board[10][6] = new Pawn(playerTwo, "A16");
         board[10][6].MovesHistory.add(new Position(10, 6));
+        piecesList.add(board[10][6]);
         board[0][7] = new Pawn(playerTwo, "A17");
         board[0][7].MovesHistory.add(new Position(0, 7));
+        piecesList.add(board[0][7]);
         board[10][7] = new Pawn(playerTwo, "A18");
         board[10][7].MovesHistory.add(new Position(10, 7));
+        piecesList.add(board[10][7]);
         board[5][9] = new Pawn(playerTwo, "A19");
         board[5][9].MovesHistory.add(new Position(5, 9));
+        piecesList.add(board[5][9]);
         board[3][10] = new Pawn(playerTwo, "A20");
         board[3][10].MovesHistory.add(new Position(3, 10));
+        piecesList.add(board[3][10]);
         board[4][10] = new Pawn(playerTwo, "A21");
         board[4][10].MovesHistory.add(new Position(4, 10));
+        piecesList.add(board[4][10]);
         board[5][10] = new Pawn(playerTwo, "A22");
         board[5][10].MovesHistory.add(new Position(5, 10));
+        piecesList.add(board[5][10]);
         board[6][10] = new Pawn(playerTwo, "A23");
         board[6][10].MovesHistory.add(new Position(6, 10));
+        piecesList.add(board[6][10]);
         board[7][10] = new Pawn(playerTwo, "A24");
         board[7][10].MovesHistory.add(new Position(7, 10));
+        piecesList.add(board[7][10]);
     }
 
     @Override
@@ -531,11 +551,17 @@ public class GameLogic implements PlayableLogic {
     }
 
     public void printFinish() {
+        //sort and print by moves
         piecesList.sort(new movesComparator());
         //need to add win and lose prints
         for (ConcretePiece piece : piecesList) {
-            System.out.println(piece.getID() + " " + piece.MovesHistory.toString());
+            System.out.println(piece.getID() + ": " + piece.MovesHistory.toString());
         }
+        //sort and print by kill count
+
+        //sort and print by distance
+
+        //sort and print tails count
     }
 }
 
