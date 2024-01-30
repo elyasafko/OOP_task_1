@@ -80,10 +80,17 @@ class killComparator implements Comparator<ConcretePiece>
         return 0;
     }
 }
-class disComparator implements Comparator<ConcretePiece>
+class stepComparator implements Comparator<ConcretePiece>
 {
     public int compare(ConcretePiece a, ConcretePiece b)
     {
-        return -1;
+        int aa = Integer.parseInt(a.getID().substring(1));
+        int bb = Integer.parseInt(b.getID().substring(1));
+
+        if(a.getStepCounter() != b.getStepCounter())
+            return b.getStepCounter() - a.getStepCounter();
+        if (aa != bb)
+            return aa - bb;
+        return 0;
     }
 }

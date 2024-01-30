@@ -274,7 +274,8 @@ public class GameLogic implements PlayableLogic {
 
     }
 
-    private int calculateSteps(Position a, Position b) {
+    private int calculateSteps(Position a, Position b)
+    {
         if (a.getRow() == b.getRow())
             return Math.abs(a.getColumn() - b.getColumn());
         else
@@ -370,7 +371,6 @@ public class GameLogic implements PlayableLogic {
         board[5][7] = new Pawn(playerOne, "D13");
         board[5][7].MovesHistory.add(new Position(5, 7));
         piecesList.add(board[5][7]);
-
         //Attackers
         board[3][0] = new Pawn(playerTwo, "A1");
         board[3][0].MovesHistory.add(new Position(3, 0));
@@ -447,7 +447,8 @@ public class GameLogic implements PlayableLogic {
     }
 
     @Override
-    public void undoLastMove() {
+    public void undoLastMove()
+    {
         //check if the move order is empty
         if (MoveOrder.isEmpty())
             return;
@@ -547,47 +548,77 @@ public class GameLogic implements PlayableLogic {
         return boardSize;
     }
 
-    public void printFinish(ConcretePlayer winner) {
+    public void printFinish(ConcretePlayer winner)
+    {
         //sort and print by moves
         piecesList.sort(new movesComparator());
         //need to add win and lose prints
-        for (ConcretePiece piece : piecesList) {
+        for (ConcretePiece piece : piecesList)
+        {
             if ((piece.MovesHistory.size() > 1) && (piece.getOwner() == winner))
                 System.out.println(piece.getID() + ": " + piece.MovesHistory.toString());
         }
-        for (ConcretePiece piece : piecesList) {
-            if ((piece.MovesHistory.size() > 1) && (piece.getOwner() == winner))
+        for (ConcretePiece piece : piecesList)
+        {
+            if ((piece.MovesHistory.size() > 1) && (piece.getOwner() != winner))
                 System.out.println(piece.getID() + ": " + piece.MovesHistory.toString());
         }
+        System.out.println("***************************************************************************");
         //sort and print by kill count
         piecesList.sort(new killComparator());
         sortSameKillsAndNumber(piecesList, winner);
-        for (ConcretePiece piece : piecesList) {
+        for (ConcretePiece piece : piecesList)
+        {
             if (piece.getKillCount() > 0)
-                System.out.println(piece.getID() + ": " + piece.getKillCount());
+                System.out.println(piece.getID() + ": " + piece.getKillCount() + " kills");
         }
-
+        System.out.println("***************************************************************************");
         //sort and print by distance
-
+        piecesList.sort(new stepComparator());
+        sortSameStepsAndNumber(piecesList, winner);
+        for (ConcretePiece piece : piecesList)
+        {
+            if (piece.getStepCounter() > 0)
+                System.out.println(piece.getID() + ": " + piece.getStepCounter() + " squares");
+        }
+        System.out.println("***************************************************************************");
         //sort and print tails count
+
+        System.out.println("***************************************************************************");
     }
 
-    public void sortSameKillsAndNumber(ArrayList<ConcretePiece> piecesList, ConcretePlayer winner) {
+    public void sortSameKillsAndNumber(ArrayList<ConcretePiece> piecesList, ConcretePlayer winner)
+    {
         //sort by winner
-        for (int i = 1; i < piecesList.size() - 1; i++) {
+        for (int i = 0; i < piecesList.size() - 1; i++)
+        {
             if (piecesList.get(i).getKillCount() != piecesList.get(i + 1).getKillCount())
                 continue;
-
-            if ((piecesList.get(i).getID().substring(1).equals(piecesList.get(i + 1).getID().substring(1))) && (piecesList.get(i).getOwner() != winner)) {
-                System.out.println("the string is:" + piecesList.get(i).getID() + "   the substring is:" + piecesList.get(i).getID().substring(1));
+            if ((piecesList.get(i).getID().substring(1).equals(piecesList.get(i + 1).getID().substring(1))) && (piecesList.get(i).getOwner() != winner))
+            {
+                //System.out.println("the string is:" + piecesList.get(i).getID() + "   the substring is:" + piecesList.get(i).getID().substring(1));
                 ConcretePiece temp = piecesList.get(i);
                 piecesList.set(i, piecesList.get(i + 1));
                 piecesList.set(i + 1, temp);
             }
         }
     }
-
-
+    public void sortSameStepsAndNumber(ArrayList<ConcretePiece> piecesList, ConcretePlayer winner)
+    {
+        //sort by winner
+        for (int i = 0; i < piecesList.size() - 1; i++)
+        {
+            if (piecesList.get(i).getStepCounter() != piecesList.get(i + 1).getStepCounter())
+                continue;
+            if ((piecesList.get(i).getID().substring(1).equals(piecesList.get(i + 1).getID().substring(1))) && (piecesList.get(i).getOwner() != winner))
+            {
+                //System.out.println("the string is:" + piecesList.get(i).getID() + "   the substring is:" + piecesList.get(i).getID().substring(1));
+                ConcretePiece temp = piecesList.get(i);
+                piecesList.set(i, piecesList.get(i + 1));
+                piecesList.set(i + 1, temp);
+            }
+        }
+    }
 }
 
 
