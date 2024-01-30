@@ -1,7 +1,10 @@
+import java.util.ArrayList;
 public class Position
 {
     private int row;
     private int column;
+
+    private ArrayList<ConcretePiece> pieceWasHere = new ArrayList<>();
 
     public Position(int column, int row)
     {
@@ -32,5 +35,22 @@ public class Position
     public String toString()
     {
         return "(" + row + ", " + column + ")";
+    }
+
+    public int lengthPieceWasHere()
+    {
+        return pieceWasHere.size();
+    }
+    public Boolean containsPieceWasHere(ConcretePiece piece)
+    {
+        return pieceWasHere.contains(piece);
+    }
+    public void addPieceWasHere(ConcretePiece piece)
+    {
+        pieceWasHere.add(piece);
+    }
+    public void removeLastPieceWasHere()
+    {
+        pieceWasHere.removeLast();
     }
 }

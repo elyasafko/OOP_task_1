@@ -10,7 +10,7 @@ public class GameLogic implements PlayableLogic {
     //lifo stack for the undo contains concrete pieces that represent the move order if a piece is being killed it will be added to the end of the queue before the killer
     Stack<ConcretePiece> MoveOrder = new Stack<ConcretePiece>();
     ArrayList<ConcretePiece> piecesList = new ArrayList<ConcretePiece>();
-
+    ArrayList<Position> positionsUsed = new ArrayList<>();
     public GameLogic() {
         reset();
     }
@@ -619,7 +619,27 @@ public class GameLogic implements PlayableLogic {
             }
         }
     }
+    public void checkMoveHistory()
+    {
+        for(ConcretePiece piece:piecesList)
+        {
+            for(int i = 0;i < piece.MovesHistory.size(); i++)
+            {
+                if (!positionsUsed.contains(piece.MovesHistory.get(i)))
+                {
+                    positionsUsed.add(piece.MovesHistory.get(i));
+                }
+
+                if (!positionsUsed.get(positionsUsed.indexOf(piece.MovesHistory.get(i))).containsPieceWasHere(piece))
+                {
+
+                }
+                positionsUsed.get(positionsUsed.indexOf(piece.MovesHistory.get(i))).addPieceWasHere(piece);
+            }
+        }
+    }
 }
+
 
 
 //todo: check invalid inputs to the methods

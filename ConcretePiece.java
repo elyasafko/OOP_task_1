@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 /*
 this class should be an abstract class, and the concrete pieces should extend it
@@ -12,6 +11,7 @@ public abstract class ConcretePiece implements Piece
     protected String type;
     private final String ID;
     protected int StepCounter;
+
     protected ArrayList<Position> MovesHistory;
 
 
