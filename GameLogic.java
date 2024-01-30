@@ -11,10 +11,12 @@ public class GameLogic implements PlayableLogic {
     Stack<ConcretePiece> MoveOrder = new Stack<ConcretePiece>();
     ArrayList<ConcretePiece> piecesList = new ArrayList<ConcretePiece>();
 
-    public GameLogic() {reset();}
+    public GameLogic() {
+        reset();
+    }
+
     @Override
-    public boolean move(Position a, Position b)
-    {
+    public boolean move(Position a, Position b) {
         //check if the move is valid
         if (board[a.getColumn()][a.getRow()] == null)
             return false;
@@ -73,10 +75,8 @@ public class GameLogic implements PlayableLogic {
         board[b.getColumn()][b.getRow()] = board[a.getColumn()][a.getRow()];
         board[a.getColumn()][a.getRow()] = null;
         // kill check
-        if (board[b.getColumn()][b.getRow()] instanceof Pawn)
-        {
-            if (kill(b))
-            {
+        if (board[b.getColumn()][b.getRow()] instanceof Pawn) {
+            if (kill(b)) {
                 printFinish(playerTwo);
                 playerTwo.addWin();
                 reset();
@@ -94,8 +94,7 @@ public class GameLogic implements PlayableLogic {
     }
 
     //make the kill operation if someone has killed and return true if the king is killed
-    public boolean kill(Position b)
-    {
+    public boolean kill(Position b) {
         int X = b.getColumn();
         int Y = b.getRow();
         //check left
@@ -122,7 +121,6 @@ public class GameLogic implements PlayableLogic {
                     ((Pawn) board[X - 1][Y]).setALive(false);
                     board[X - 1][Y] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
-                    ((Pawn) board[X - 2][Y]).AddKillCount();
                 }
             }
             //if the piece is a king
@@ -158,7 +156,6 @@ public class GameLogic implements PlayableLogic {
                     ((Pawn) board[X + 1][Y]).setALive(false);
                     board[X + 1][Y] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
-                    ((Pawn) board[X + 2][Y]).AddKillCount();
                 }
             }
             //if the piece is a king
@@ -194,7 +191,6 @@ public class GameLogic implements PlayableLogic {
                     ((Pawn) board[X][Y - 1]).setALive(false);
                     board[X][Y - 1] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
-                    ((Pawn) board[X][Y - 2]).AddKillCount();
                 }
             }
             //if the piece is a king
@@ -230,7 +226,6 @@ public class GameLogic implements PlayableLogic {
                     ((Pawn) board[X][Y + 1]).setALive(false);
                     board[X][Y + 1] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
-                    ((Pawn) board[X][Y + 2]).AddKillCount();
                 }
             }
             //if the piece is a king
@@ -279,8 +274,7 @@ public class GameLogic implements PlayableLogic {
 
     }
 
-    private int calculateSteps(Position a, Position b)
-    {
+    private int calculateSteps(Position a, Position b) {
         if (a.getRow() == b.getRow())
             return Math.abs(a.getColumn() - b.getColumn());
         else
@@ -453,8 +447,7 @@ public class GameLogic implements PlayableLogic {
     }
 
     @Override
-    public void undoLastMove()
-    {
+    public void undoLastMove() {
         //check if the move order is empty
         if (MoveOrder.isEmpty())
             return;
@@ -471,10 +464,10 @@ public class GameLogic implements PlayableLogic {
                 ConcretePiece killedLast = MoveOrder.pop();
                 //add the killed piece to the board
                 board[killedLast.MovesHistory.getLast().getColumn()][killedLast.MovesHistory.getLast().getRow()] = killedLast;
-                //rewind the kill count piece assisted it if there is one
-                rewindKillCount(killedLast, pMovedLast);
                 //toggle the isAlive boolean
                 ((Pawn) killedLast).setALive(true);
+                //reduceKillCount the kill count of the killer piece
+                ((Pawn) pMovedLast).reduceKillCount();
 
             }
         }
@@ -485,6 +478,8 @@ public class GameLogic implements PlayableLogic {
         //decrees step counter
         pMovedLast.subStepCounter(calculateSteps(thisPosition, lastPosition));
 
+
+
         //delete the last move from the history
         pMovedLast.MovesHistory.removeLast();
 
@@ -493,58 +488,58 @@ public class GameLogic implements PlayableLogic {
     }
 
 
-    //this function will rewind the kill count of the last piece that moved and the piece that assisted it
-    public void rewindKillCount(ConcretePiece killedPiece, ConcretePiece killerPiece) {
-        // the coordinates of the killed piece
-        int Xd = killedPiece.MovesHistory.getLast().getColumn();
-        int Yd = killedPiece.MovesHistory.getLast().getRow();
-        // the coordinates of the killer piece
-        int Xr = killerPiece.MovesHistory.getLast().getColumn();
-        int Yr = killerPiece.MovesHistory.getLast().getRow();
-
-        //rewind the kill count of the killer piece
-        ((Pawn) killerPiece).reduceKillCount();
-
-        // find if there is a piece that assisted the killer piece or if it has killed by a wall or a corner
-        //check if they are in the same column
-        if (Xd == Xr) {
-            //if the killer is above the killed piece
-            if (Yd > Yr) {
-                //check if is piece is a wall or a corner
-                if (Yd != 10 && board[Xd][Yd + 1] != null && board[Xd][Yd + 1] instanceof Pawn) {
-                    //rewind the kill count of the assisted piece
-                    ((Pawn) board[Xd][Yd + 1]).reduceKillCount();
-                }
-            }
-            //if the killer is below the killed piece
-            else if (Yd < Yr) {
-                //check if is piece is a wall or a corner
-                if (Yd != 0 && board[Xd][Yd - 1] != null && board[Xd][Yd - 1] instanceof Pawn) {
-                    //rewind the kill count of the assisted piece
-                    ((Pawn) board[Xd][Yd - 1]).reduceKillCount();
-                }
-            }
-        }
-        //killed piece and killer piece are in the same row
-        else {
-            //if the killer is to the right of the killed piece
-            if (Xd > Xr) {
-                //check if is piece is a wall or a corner
-                if (Xd != 10 && board[Xd + 1][Yd] != null && board[Xd + 1][Yd] instanceof Pawn) {
-                    //rewind the kill count of the assisted piece
-                    ((Pawn) board[Xd + 1][Yd]).reduceKillCount();
-                }
-            }
-            //if the killer is to the left of the killed piece
-            else {
-                //check if is piece is a wall or a corner
-                if (Xd != 0 && board[Xd - 1][Yd] != null && board[Xd - 1][Yd] instanceof Pawn) {
-                    //rewind the kill count of the assisted piece
-                    ((Pawn) board[Xd - 1][Yd]).reduceKillCount();
-                }
-            }
-        }
-    }
+//    //this function will rewind the kill count of the last piece that moved and the piece that assisted it
+//    public void rewindKillCount(ConcretePiece killedPiece, ConcretePiece killerPiece) {
+//        // the coordinates of the killed piece
+//        int Xd = killedPiece.MovesHistory.getLast().getColumn();
+//        int Yd = killedPiece.MovesHistory.getLast().getRow();
+//        // the coordinates of the killer piece
+//        int Xr = killerPiece.MovesHistory.getLast().getColumn();
+//        int Yr = killerPiece.MovesHistory.getLast().getRow();
+//
+//        //rewind the kill count of the killer piece
+//        ((Pawn) killerPiece).reduceKillCount();
+//
+//        // find if there is a piece that assisted the killer piece or if it has killed by a wall or a corner
+//        //check if they are in the same column
+//        if (Xd == Xr) {
+//            //if the killer is above the killed piece
+//            if (Yd > Yr) {
+//                //check if is piece is a wall or a corner
+//                if (Yd != 10 && board[Xd][Yd + 1] != null && board[Xd][Yd + 1] instanceof Pawn) {
+//                    //rewind the kill count of the assisted piece
+//                    ((Pawn) board[Xd][Yd + 1]).reduceKillCount();
+//                }
+//            }
+//            //if the killer is below the killed piece
+//            else if (Yd < Yr) {
+//                //check if is piece is a wall or a corner
+//                if (Yd != 0 && board[Xd][Yd - 1] != null && board[Xd][Yd - 1] instanceof Pawn) {
+//                    //rewind the kill count of the assisted piece
+//                    ((Pawn) board[Xd][Yd - 1]).reduceKillCount();
+//                }
+//            }
+//        }
+//        //killed piece and killer piece are in the same row
+//        else {
+//            //if the killer is to the right of the killed piece
+//            if (Xd > Xr) {
+//                //check if is piece is a wall or a corner
+//                if (Xd != 10 && board[Xd + 1][Yd] != null && board[Xd + 1][Yd] instanceof Pawn) {
+//                    //rewind the kill count of the assisted piece
+//                    ((Pawn) board[Xd + 1][Yd]).reduceKillCount();
+//                }
+//            }
+//            //if the killer is to the left of the killed piece
+//            else {
+//                //check if is piece is a wall or a corner
+//                if (Xd != 0 && board[Xd - 1][Yd] != null && board[Xd - 1][Yd] instanceof Pawn) {
+//                    //rewind the kill count of the assisted piece
+//                    ((Pawn) board[Xd - 1][Yd]).reduceKillCount();
+//                }
+//            }
+//        }
+//    }
 
 
     @Override
@@ -552,25 +547,22 @@ public class GameLogic implements PlayableLogic {
         return boardSize;
     }
 
-    public void printFinish(ConcretePlayer winner)
-    {
+    public void printFinish(ConcretePlayer winner) {
         //sort and print by moves
         piecesList.sort(new movesComparator());
         //need to add win and lose prints
-        for (ConcretePiece piece : piecesList)
-        {
+        for (ConcretePiece piece : piecesList) {
             if ((piece.MovesHistory.size() > 1) && (piece.getOwner() == winner))
                 System.out.println(piece.getID() + ": " + piece.MovesHistory.toString());
         }
-        for (ConcretePiece piece : piecesList)
-        {
+        for (ConcretePiece piece : piecesList) {
             if ((piece.MovesHistory.size() > 1) && (piece.getOwner() == winner))
                 System.out.println(piece.getID() + ": " + piece.MovesHistory.toString());
         }
         //sort and print by kill count
         piecesList.sort(new killComparator());
-        for (ConcretePiece piece : piecesList)
-        {
+        sortSameKillsAndNumber(piecesList, winner);
+        for (ConcretePiece piece : piecesList) {
             if (piece.getKillCount() > 0)
                 System.out.println(piece.getID() + ": " + piece.getKillCount());
         }
@@ -579,6 +571,23 @@ public class GameLogic implements PlayableLogic {
 
         //sort and print tails count
     }
+
+    public void sortSameKillsAndNumber(ArrayList<ConcretePiece> piecesList, ConcretePlayer winner) {
+        //sort by winner
+        for (int i = 1; i < piecesList.size() - 1; i++) {
+            if (piecesList.get(i).getKillCount() != piecesList.get(i + 1).getKillCount())
+                continue;
+
+            if ((piecesList.get(i).getID().substring(1).equals(piecesList.get(i + 1).getID().substring(1))) && (piecesList.get(i).getOwner() != winner)) {
+                System.out.println("the string is:" + piecesList.get(i).getID() + "   the substring is:" + piecesList.get(i).getID().substring(1));
+                ConcretePiece temp = piecesList.get(i);
+                piecesList.set(i, piecesList.get(i + 1));
+                piecesList.set(i + 1, temp);
+            }
+        }
+    }
+
+
 }
 
 
