@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,18 +23,6 @@ public class Position
     {
         return column;
     }
-    public void setColumn(int column)
-    {
-        this.column = column;
-    }
-    public void setRow(int row)
-    {
-        this.row = row;
-    }
-    public boolean equals(Position other)
-    {
-        return this.row == other.row && this.column == other.column;
-    }
     public String toString()
     {
         return "(" + column + ", " + row + ")";
@@ -44,10 +31,6 @@ public class Position
     public int lengthPieceWasHere()
     {
         return pieceWasHere.size();
-    }
-    public Boolean containsPieceWasHere(ConcretePiece piece)
-    {
-        return pieceWasHere.contains(piece);
     }
     public void addPieceWasHere(ConcretePiece piece)
     {
@@ -61,10 +44,10 @@ class tailsComparator implements Comparator<Position>
     {
         if(a.lengthPieceWasHere() != b.lengthPieceWasHere())
             return b.lengthPieceWasHere() - a.lengthPieceWasHere();
-        if (a.getRow() != b.getRow())
-            return a.getRow() - b.getRow();
         if (a.getColumn() != b.getColumn())
             return a.getColumn() - b.getColumn();
+        if (a.getRow() != b.getRow())
+            return a.getRow() - b.getRow();
         return 0;
     }
 }

@@ -6,19 +6,16 @@ public class ConcretePlayer implements Player
 
 
 
-    public ConcretePlayer(boolean isPlayerOne, int picesRemain)
+    public ConcretePlayer(boolean isPlayerOne, int piecesRemain)
     {
         this.isPlayerOne = isPlayerOne;
-        this.piecesRemain = picesRemain;
+        this.piecesRemain = piecesRemain;
     }
     public int getPiecesRemain()
     {
         return piecesRemain;
     }
-    public void setPicesRemain()
-    {
-        this.piecesRemain--;
-    }
+    public void minusPiecesRemain() {this.piecesRemain--;}
     @Override
     public boolean isPlayerOne()
     {

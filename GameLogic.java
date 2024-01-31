@@ -3,15 +3,16 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
-public class GameLogic implements PlayableLogic {
+public class GameLogic implements PlayableLogic
+{
     int boardSize = 11;
     boolean isSecondPlayerTurn = true;
     ConcretePiece[][] board = new ConcretePiece[boardSize][boardSize];
     ConcretePlayer playerOne = new ConcretePlayer(true, 13);
     ConcretePlayer playerTwo = new ConcretePlayer(false, 24);
     //lifo stack for the undo contains concrete pieces that represent the move order if a piece is being killed it will be added to the end of the queue before the killer
-    Stack<ConcretePiece> MoveOrder = new Stack<ConcretePiece>();
-    ArrayList<ConcretePiece> piecesList = new ArrayList<ConcretePiece>();
+    Stack<ConcretePiece> MoveOrder = new Stack<>();
+    ArrayList<ConcretePiece> piecesList = new ArrayList<>();
     ArrayList<Position> positionsUsedArr = new ArrayList<>();
     Set<Position> positionsUsed = new HashSet<>();
 
@@ -29,7 +30,8 @@ public class GameLogic implements PlayableLogic {
             return false;
         if (board[a.getColumn()][a.getRow()].getOwner().isPlayerOne() == isSecondPlayerTurn)
             return false;
-        if (board[a.getColumn()][a.getRow()] instanceof Pawn) {
+        if (board[a.getColumn()][a.getRow()] instanceof Pawn)
+        {
             //corner check
             if (b.getRow() == 0 && b.getColumn() == 0)
                 return false;
@@ -47,30 +49,34 @@ public class GameLogic implements PlayableLogic {
         if (a.getRow() != b.getRow() && a.getColumn() != b.getColumn())
             return false;
         // check if the road is available
-        if (a.getRow() == b.getRow()) {
-            if (a.getColumn() < b.getColumn()) {
-                for (int i = a.getColumn() + 1; i < b.getColumn(); i++) {
-                    if (board[i][a.getRow()] != null)
-                        return false;
-                }
-            } else {
-                for (int i = a.getColumn() - 1; i > b.getColumn(); i--) {
+        if (a.getRow() == b.getRow())
+        {
+            if (a.getColumn() < b.getColumn())
+            {
+                for (int i = a.getColumn() + 1; i < b.getColumn(); i++)
+                {
                     if (board[i][a.getRow()] != null)
                         return false;
                 }
             }
-        } else {
-            if (a.getRow() < b.getRow()) {
-                for (int i = a.getRow() + 1; i < b.getRow(); i++) {
-                    if (board[a.getColumn()][i] != null)
+            else
+            {
+                for (int i = a.getColumn() - 1; i > b.getColumn(); i--)
+                    if (board[i][a.getRow()] != null)
                         return false;
-                }
-            } else {
-                for (int i = a.getRow() - 1; i > b.getRow(); i--) {
-                    if (board[a.getColumn()][i] != null)
-                        return false;
-                }
             }
+        } else
+        {
+            if (a.getRow() < b.getRow())
+            {
+                for (int i = a.getRow() + 1; i < b.getRow(); i++)
+                    if (board[a.getColumn()][i] != null)
+                        return false;
+            }
+            else
+                for (int i = a.getRow() - 1; i > b.getRow(); i--)
+                    if (board[a.getColumn()][i] != null)
+                        return false;
         }
         //swap turns
         isSecondPlayerTurn = !isSecondPlayerTurn;
@@ -102,153 +108,232 @@ public class GameLogic implements PlayableLogic {
     }
 
     //make the kill operation if someone has killed and return true if the king is killed
-    public boolean kill(Position b) {
+    public boolean kill(Position b)
+    {
         int X = b.getColumn();
         int Y = b.getRow();
         //check left
-        if ((X != 0) && (board[X - 1][Y] != null) && (board[X - 1][Y].getOwner() != board[X][Y].getOwner())) {
+        if ((X != 0) && (board[X - 1][Y] != null) && (board[X - 1][Y].getOwner() != board[X][Y].getOwner()))
+        {
             //check if the piece is a pawn
-            if (board[X - 1][Y] instanceof Pawn) {
+            if (board[X - 1][Y] instanceof Pawn)
+            {
                 // check if we close to a wall
-                if (X == 1) {
+                if (X == 1)
+                {
+                    if (board[X - 1][Y].getOwner() == playerOne)
+                        playerOne.minusPiecesRemain();
+                    else
+                        playerTwo.minusPiecesRemain();
                     MoveOrder.push(board[X - 1][Y]);
                     ((Pawn) board[X - 1][Y]).setALive(false);
                     board[X - 1][Y] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
+
                 }
                 // check if we close to a corner
-                else if ((X == 2 && (Y == 0 || Y == 10))) {
+                else if ((X == 2 && (Y == 0 || Y == 10)))
+                {
+                    if (board[X - 1][Y].getOwner() == playerOne)
+                        playerOne.minusPiecesRemain();
+                    else
+                        playerTwo.minusPiecesRemain();
                     MoveOrder.push(board[X - 1][Y]);
                     ((Pawn) board[X - 1][Y]).setALive(false);
                     board[X - 1][Y] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
+
                 }
                 //add kill counts and remove the killed piece
-                else if (((board[X - 2][Y] != null)) && (board[X - 2][Y].getOwner() == board[X][Y].getOwner()) && (board[X - 2][Y] instanceof Pawn)) {
+                else if (((board[X - 2][Y] != null)) && (board[X - 2][Y].getOwner() == board[X][Y].getOwner()) && (board[X - 2][Y] instanceof Pawn))
+                {
+                    if (board[X - 1][Y].getOwner() == playerOne)
+                        playerOne.minusPiecesRemain();
+                    else
+                        playerTwo.minusPiecesRemain();
                     MoveOrder.push(board[X - 1][Y]);
                     ((Pawn) board[X - 1][Y]).setALive(false);
                     board[X - 1][Y] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
+
                 }
             }
             //if the piece is a king
-            else if (board[X - 1][Y] instanceof King) {
+            else if (board[X - 1][Y] instanceof King)
+            {
                 Position c = new Position(X - 1, Y);
                 //check if the king is surrounded
-                if (kingCheckSurrounding(c)) {
-                    return true;
-                }
+                if (kingCheckSurrounding(c)) return true;
             }
         }
         //check right
-        if ((X != 10) && (board[X + 1][Y] != null) && (board[X + 1][Y].getOwner() != board[X][Y].getOwner())) {
+        if ((X != 10) && (board[X + 1][Y] != null) && (board[X + 1][Y].getOwner() != board[X][Y].getOwner()))
+        {
             //check if the piece is a pawn
-            if (board[X + 1][Y] instanceof Pawn) {
+            if (board[X + 1][Y] instanceof Pawn)
+            {
                 // check if we close to a wall
-                if (X == 9) {
+                if (X == 9)
+                {
+                    if (board[X + 1][Y].getOwner() == playerOne)
+                        playerOne.minusPiecesRemain();
+                    else
+                        playerTwo.minusPiecesRemain();
                     MoveOrder.push(board[X + 1][Y]);
                     ((Pawn) board[X + 1][Y]).setALive(false);
                     board[X + 1][Y] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
+
                 }
                 // check if we close to a corner
-                else if (X == 8 && ((Y == 0) || (Y == 10))) {
+                else if (X == 8 && ((Y == 0) || (Y == 10)))
+                {
+                    if (board[X + 1][Y].getOwner() == playerOne)
+                        playerOne.minusPiecesRemain();
+                    else
+                        playerTwo.minusPiecesRemain();
                     MoveOrder.push(board[X + 1][Y]);
                     ((Pawn) board[X + 1][Y]).setALive(false);
                     board[X + 1][Y] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
+
                 }
                 //add kill counts and remove the killed piece
-                else if (((board[X + 2][Y] != null)) && (board[X + 2][Y].getOwner() == board[X][Y].getOwner()) && (board[X + 2][Y] instanceof Pawn)) {
+                else if (((board[X + 2][Y] != null)) && (board[X + 2][Y].getOwner() == board[X][Y].getOwner()) && (board[X + 2][Y] instanceof Pawn))
+                {
+                    if (board[X + 1][Y].getOwner() == playerOne)
+                        playerOne.minusPiecesRemain();
+                    else
+                        playerTwo.minusPiecesRemain();
                     MoveOrder.push(board[X + 1][Y]);
                     ((Pawn) board[X + 1][Y]).setALive(false);
                     board[X + 1][Y] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
+
                 }
             }
             //if the piece is a king
-            else if (board[X + 1][Y] instanceof King) {
+            else if (board[X + 1][Y] instanceof King)
+            {
                 Position c = new Position(X + 1, Y);
                 //check if the king is surrounded
-                if (kingCheckSurrounding(c)) {
+                if (kingCheckSurrounding(c))
                     return true;
-                }
             }
         }
         //check up
-        if ((Y != 0) && (board[X][Y - 1] != null) && (board[X][Y - 1].getOwner() != board[X][Y].getOwner())) {
+        if ((Y != 0) && (board[X][Y - 1] != null) && (board[X][Y - 1].getOwner() != board[X][Y].getOwner()))
+        {
             //check if the piece is a pawn
-            if (board[X][Y - 1] instanceof Pawn) {
+            if (board[X][Y - 1] instanceof Pawn)
+            {
                 // check if we close to a wall
-                if (Y == 1) {
+                if (Y == 1)
+                {
+                    if (board[X][Y - 1].getOwner() == playerOne)
+                        playerOne.minusPiecesRemain();
+                    else
+                        playerTwo.minusPiecesRemain();
                     MoveOrder.push(board[X][Y - 1]);
                     ((Pawn) board[X][Y - 1]).setALive(false);
                     board[X][Y - 1] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
+
                 }
                 // check if we close to a corner
-                else if (Y == 2 && ((X == 0) || (X == 10))) {
+                else if (Y == 2 && ((X == 0) || (X == 10)))
+                {
+                    if (board[X][Y - 1].getOwner() == playerOne)
+                        playerOne.minusPiecesRemain();
+                    else
+                        playerTwo.minusPiecesRemain();
                     MoveOrder.push(board[X][Y - 1]);
                     ((Pawn) board[X][Y - 1]).setALive(false);
                     board[X][Y - 1] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
+
                 }
                 //add kill counts and remove the killed piece
-                else if (((board[X][Y - 2] != null)) && (board[X][Y - 2].getOwner() == board[X][Y].getOwner()) && (board[X][Y - 2] instanceof Pawn)) {
+                else if (((board[X][Y - 2] != null)) && (board[X][Y - 2].getOwner() == board[X][Y].getOwner()) && (board[X][Y - 2] instanceof Pawn))
+                {
+                    if (board[X][Y - 1].getOwner() == playerOne)
+                        playerOne.minusPiecesRemain();
+                    else
+                        playerTwo.minusPiecesRemain();
                     MoveOrder.push(board[X][Y - 1]);
                     ((Pawn) board[X][Y - 1]).setALive(false);
                     board[X][Y - 1] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
+
                 }
             }
             //if the piece is a king
-            else if (board[X][Y - 1] instanceof King) {
+            else if (board[X][Y - 1] instanceof King)
+            {
                 Position c = new Position(X, Y - 1);
                 //check if the king is surrounded
-                if (kingCheckSurrounding(c)) {
+                if (kingCheckSurrounding(c))
                     return true;
-                }
             }
         }
         //check down
-        if ((Y != 10) && (board[X][Y + 1] != null) && (board[X][Y + 1].getOwner() != board[X][Y].getOwner())) {
+        if ((Y != 10) && (board[X][Y + 1] != null) && (board[X][Y + 1].getOwner() != board[X][Y].getOwner()))
+        {
             //check if the piece is a pawn
-            if (board[X][Y + 1] instanceof Pawn) {
+            if (board[X][Y + 1] instanceof Pawn)
+            {
                 // check if we close to a wall
-                if (Y == 9) {
+                if (Y == 9)
+                {
+                    if (board[X][Y + 1].getOwner() == playerOne)
+                        playerOne.minusPiecesRemain();
+                    else
+                        playerTwo.minusPiecesRemain();
                     MoveOrder.push(board[X][Y + 1]);
                     ((Pawn) board[X][Y + 1]).setALive(false);
                     board[X][Y + 1] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
+
                 }
                 // check if we close to a corner
-                else if (Y == 8 && ((X == 0) || (X == 10))) {
+                else if (Y == 8 && ((X == 0) || (X == 10)))
+                {
+                    if (board[X][Y + 1].getOwner() == playerOne)
+                        playerOne.minusPiecesRemain();
+                    else
+                        playerTwo.minusPiecesRemain();
                     MoveOrder.push(board[X][Y + 1]);
                     ((Pawn) board[X][Y + 1]).setALive(false);
                     board[X][Y + 1] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
+
                 }
                 //add kill counts and remove the killed piece
                 else if (((board[X][Y + 2] != null)) && (board[X][Y + 2].getOwner() == board[X][Y].getOwner()) && (board[X][Y + 2] instanceof Pawn)) {
+                    if (board[X][Y + 1].getOwner() == playerOne)
+                        playerOne.minusPiecesRemain();
+                    else
+                        playerTwo.minusPiecesRemain();
                     MoveOrder.push(board[X][Y + 1]);
                     ((Pawn) board[X][Y + 1]).setALive(false);
                     board[X][Y + 1] = null;
                     ((Pawn) board[X][Y]).AddKillCount();
+
                 }
             }
             //if the piece is a king
-            else if (board[X][Y + 1] instanceof King) {
+            else if (board[X][Y + 1] instanceof King)
+            {
                 Position c = new Position(X, Y + 1);
                 //check if the king is surrounded
-                if (kingCheckSurrounding(c)) {
-                    return true;
-                }
+                return kingCheckSurrounding(c);
             }
         }
         return false;
     }
 
-    private boolean kingCheckSurrounding(Position c) {
+    private boolean kingCheckSurrounding(Position c)
+    {
         //make instance for every side position
         Position up = new Position(c.getColumn(), c.getRow() + 1);
         Position down = new Position(c.getColumn(), c.getRow() - 1);
@@ -256,12 +341,11 @@ public class GameLogic implements PlayableLogic {
         Position right = new Position(c.getColumn() + 1, c.getRow());
 
         // check if all sides are attackers walls or a corner
-        if (check_side_for_king(up) && check_side_for_king(down) && check_side_for_king(left) && check_side_for_king(right))
-            return true;
-        return false;
+        return check_side_for_king(up) && check_side_for_king(down) && check_side_for_king(left) && check_side_for_king(right);
     }
 
-    private boolean check_side_for_king(Position d) {
+    private boolean check_side_for_king(Position d)
+    {
         //check if outside the board
         if (d.getColumn() < 0 || d.getColumn() > 10 || d.getRow() < 0 || d.getRow() > 10) {
             return true;
@@ -275,10 +359,7 @@ public class GameLogic implements PlayableLogic {
             return false;
         }
         //if attacker return true
-        else if (board[d.getColumn()][d.getRow()].getOwner() == playerTwo) {
-            return true;
-        }
-        return false;
+        else return board[d.getColumn()][d.getRow()].getOwner() == playerTwo;
 
     }
 
@@ -306,14 +387,17 @@ public class GameLogic implements PlayableLogic {
     }
 
     @Override
-    public boolean isGameFinished() {
+    public boolean isGameFinished()
+    {
         //check if one of the players has no pieces left.
-        if (playerOne.getPiecesRemain() == 0) {
+        if (playerOne.getPiecesRemain() == 0)
+        {
             playerTwo.addWin();
             printFinish(playerTwo);
             return true;
         }
-        if (playerTwo.getPiecesRemain() == 0) {
+        if (playerTwo.getPiecesRemain() == 0)
+        {
             playerOne.addWin();
             printFinish(playerOne);
             return true;
@@ -333,13 +417,22 @@ public class GameLogic implements PlayableLogic {
     }
 
     @Override
-    public void reset() {
+    public void reset()
+    {
         board = new ConcretePiece[boardSize][boardSize];
         isSecondPlayerTurn = true;
+        piecesList.clear();
+        positionsUsedArr.clear();
+        positionsUsed.clear();
+
         MoveOrder.clear();
+        for (int i = 0; i < boardSize; i++)
+            for (int j = 0; j < boardSize; j++)
+                if (board[i][j] != null)
+                    board[i][j].MovesHistory.clear();
+
 
         //King
-
         board[5][5] = new King(playerOne, "K7");
         board[5][5].MovesHistory.add(new Position(5, 5));
         piecesList.add(board[5][5]);
@@ -488,8 +581,6 @@ public class GameLogic implements PlayableLogic {
         //decrees step counter
         pMovedLast.subStepCounter(calculateSteps(thisPosition, lastPosition));
 
-
-
         //delete the last move from the history
         pMovedLast.MovesHistory.removeLast();
 
@@ -498,64 +589,8 @@ public class GameLogic implements PlayableLogic {
     }
 
 
-//    //this function will rewind the kill count of the last piece that moved and the piece that assisted it
-//    public void rewindKillCount(ConcretePiece killedPiece, ConcretePiece killerPiece) {
-//        // the coordinates of the killed piece
-//        int Xd = killedPiece.MovesHistory.getLast().getColumn();
-//        int Yd = killedPiece.MovesHistory.getLast().getRow();
-//        // the coordinates of the killer piece
-//        int Xr = killerPiece.MovesHistory.getLast().getColumn();
-//        int Yr = killerPiece.MovesHistory.getLast().getRow();
-//
-//        //rewind the kill count of the killer piece
-//        ((Pawn) killerPiece).reduceKillCount();
-//
-//        // find if there is a piece that assisted the killer piece or if it has killed by a wall or a corner
-//        //check if they are in the same column
-//        if (Xd == Xr) {
-//            //if the killer is above the killed piece
-//            if (Yd > Yr) {
-//                //check if is piece is a wall or a corner
-//                if (Yd != 10 && board[Xd][Yd + 1] != null && board[Xd][Yd + 1] instanceof Pawn) {
-//                    //rewind the kill count of the assisted piece
-//                    ((Pawn) board[Xd][Yd + 1]).reduceKillCount();
-//                }
-//            }
-//            //if the killer is below the killed piece
-//            else if (Yd < Yr) {
-//                //check if is piece is a wall or a corner
-//                if (Yd != 0 && board[Xd][Yd - 1] != null && board[Xd][Yd - 1] instanceof Pawn) {
-//                    //rewind the kill count of the assisted piece
-//                    ((Pawn) board[Xd][Yd - 1]).reduceKillCount();
-//                }
-//            }
-//        }
-//        //killed piece and killer piece are in the same row
-//        else {
-//            //if the killer is to the right of the killed piece
-//            if (Xd > Xr) {
-//                //check if is piece is a wall or a corner
-//                if (Xd != 10 && board[Xd + 1][Yd] != null && board[Xd + 1][Yd] instanceof Pawn) {
-//                    //rewind the kill count of the assisted piece
-//                    ((Pawn) board[Xd + 1][Yd]).reduceKillCount();
-//                }
-//            }
-//            //if the killer is to the left of the killed piece
-//            else {
-//                //check if is piece is a wall or a corner
-//                if (Xd != 0 && board[Xd - 1][Yd] != null && board[Xd - 1][Yd] instanceof Pawn) {
-//                    //rewind the kill count of the assisted piece
-//                    ((Pawn) board[Xd - 1][Yd]).reduceKillCount();
-//                }
-//            }
-//        }
-//    }
-
-
     @Override
-    public int getBoardSize() {
-        return boardSize;
-    }
+    public int getBoardSize() {return boardSize;}
 
     public void printFinish(ConcretePlayer winner)
     {
@@ -617,7 +652,6 @@ public class GameLogic implements PlayableLogic {
                 continue;
             if ((piecesList.get(i).getID().substring(1).equals(piecesList.get(i + 1).getID().substring(1))) && (piecesList.get(i).getOwner() != winner))
             {
-                //System.out.println("the string is:" + piecesList.get(i).getID() + "   the substring is:" + piecesList.get(i).getID().substring(1));
                 ConcretePiece temp = piecesList.get(i);
                 piecesList.set(i, piecesList.get(i + 1));
                 piecesList.set(i + 1, temp);
@@ -633,7 +667,6 @@ public class GameLogic implements PlayableLogic {
                 continue;
             if ((piecesList.get(i).getID().substring(1).equals(piecesList.get(i + 1).getID().substring(1))) && (piecesList.get(i).getOwner() != winner))
             {
-                //System.out.println("the string is:" + piecesList.get(i).getID() + "   the substring is:" + piecesList.get(i).getID().substring(1));
                 ConcretePiece temp = piecesList.get(i);
                 piecesList.set(i, piecesList.get(i + 1));
                 piecesList.set(i + 1, temp);
@@ -655,11 +688,3 @@ public class GameLogic implements PlayableLogic {
                         position.addPieceWasHere(piece);
     }
 }
-
-
-
-//todo: check invalid inputs to the methods
-//todo: check better if the eat is perfect
-//todo: add is game finished to the correct place and remove 3 print lines from him and put outside is a single if
-//TODO: fix the kill count that it will only only count kills for the pice that moved
-//todo:
