@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 
 public class GameLogic implements PlayableLogic {
@@ -10,7 +12,9 @@ public class GameLogic implements PlayableLogic {
     //lifo stack for the undo contains concrete pieces that represent the move order if a piece is being killed it will be added to the end of the queue before the killer
     Stack<ConcretePiece> MoveOrder = new Stack<ConcretePiece>();
     ArrayList<ConcretePiece> piecesList = new ArrayList<ConcretePiece>();
-    ArrayList<Position> positionsUsed = new ArrayList<>();
+    ArrayList<Position> positionsUsedArr = new ArrayList<>();
+    Set<Position> positionsUsed = new HashSet<>();
+
     public GameLogic() {
         reset();
     }
@@ -331,9 +335,11 @@ public class GameLogic implements PlayableLogic {
         MoveOrder.clear();
 
         //King
-        board[5][5] = new King(playerOne, "k7");
-        board[5][5].MovesHistory.add(new Position(5, 5));
-        piecesList.add(board[5][5]);
+        int i = 0;
+        int j = 9;
+        board[i][j] = new King(playerOne, "k7");
+        board[i][j].MovesHistory.add(new Position(i, j));
+        piecesList.add(board[i][j]);
         //Defenders
         board[5][3] = new Pawn(playerOne, "D1");
         board[5][3].MovesHistory.add(new Position(5, 3));
@@ -583,7 +589,19 @@ public class GameLogic implements PlayableLogic {
         }
         System.out.println("***************************************************************************");
         //sort and print tails count
-
+        checkMoveHistory();
+        positionsUsedArr.sort(new tailsComparator());
+        for(int i = positionsUsedArr.size() -1 ; i >0 ; i--)
+        {
+            if (positionsUsedArr.get(i).getColumn() == positionsUsedArr.get(i-1).getColumn() &&
+                    positionsUsedArr.get(i).getRow() == positionsUsedArr.get(i-1).getRow())
+                positionsUsedArr.remove(i-1);
+        }
+        for (Position position : positionsUsedArr)
+        {
+            if (position.lengthPieceWasHere() > 1)
+                System.out.println(position.toString() + position.lengthPieceWasHere() + " pieces");
+        }
         System.out.println("***************************************************************************");
     }
 
@@ -621,22 +639,17 @@ public class GameLogic implements PlayableLogic {
     }
     public void checkMoveHistory()
     {
+        // add to positionsUsed all the moves history
         for(ConcretePiece piece:piecesList)
-        {
-            for(int i = 0;i < piece.MovesHistory.size(); i++)
-            {
-                if (!positionsUsed.contains(piece.MovesHistory.get(i)))
-                {
-                    positionsUsed.add(piece.MovesHistory.get(i));
-                }
+            positionsUsed.addAll(piece.MovesHistory);
 
-                if (!positionsUsed.get(positionsUsed.indexOf(piece.MovesHistory.get(i))).containsPieceWasHere(piece))
-                {
-
-                }
-                positionsUsed.get(positionsUsed.indexOf(piece.MovesHistory.get(i))).addPieceWasHere(piece);
-            }
-        }
+        positionsUsedArr.addAll(positionsUsed);
+        // add to positionsUsed all the pieces that were in the same position
+        for (Position position : positionsUsedArr)
+            for (ConcretePiece piece : piecesList)
+                for(Position position1 : piece.MovesHistory)
+                    if (position.getRow() == position1.getRow() && position.getColumn() == position1.getColumn())
+                        position.addPieceWasHere(piece);
     }
 }
 

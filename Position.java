@@ -1,11 +1,15 @@
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
+
 public class Position
 {
     private int row;
     private int column;
 
-    private ArrayList<ConcretePiece> pieceWasHere = new ArrayList<>();
-
+    //private ArrayList<ConcretePiece> pieceWasHere = new ArrayList<>();
+    private Set<ConcretePiece> pieceWasHere = new HashSet<>();
     public Position(int column, int row)
     {
         this.row = row;
@@ -49,8 +53,18 @@ public class Position
     {
         pieceWasHere.add(piece);
     }
-    public void removeLastPieceWasHere()
+}
+
+class tailsComparator implements Comparator<Position>
+{
+    public int compare(Position a, Position b)
     {
-        pieceWasHere.removeLast();
+        if(a.lengthPieceWasHere() != b.lengthPieceWasHere())
+            return b.lengthPieceWasHere() - a.lengthPieceWasHere();
+        if (a.getRow() != b.getRow())
+            return a.getRow() - b.getRow();
+        if (a.getColumn() != b.getColumn())
+            return a.getColumn() - b.getColumn();
+        return 0;
     }
 }

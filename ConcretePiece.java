@@ -52,8 +52,6 @@ public abstract class ConcretePiece implements Piece
 }
 
 
-
-
 //Comparators
 class movesComparator implements Comparator<ConcretePiece>
 {
