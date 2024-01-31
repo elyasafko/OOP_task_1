@@ -551,12 +551,14 @@ public class GameLogic implements PlayableLogic
     @Override
     public void undoLastMove()
     {
+        int lastposition;
         //check if the move order is empty
         if (MoveOrder.isEmpty())
             return;
         //get the last mover position and the position before it
         ConcretePiece pMovedLast = MoveOrder.pop();
-        Position thisPosition = pMovedLast.MovesHistory.getLast();
+        lastposition = pMovedLast.MovesHistory.size() - 1;
+        Position thisPosition = pMovedLast.MovesHistory.get(lastposition);
         Position lastPosition = pMovedLast.MovesHistory.get(pMovedLast.MovesHistory.size() - 2);
 
         //check if the mover before got killed if so keep checking until you find a piece that is alive
@@ -566,7 +568,7 @@ public class GameLogic implements PlayableLogic
             while (MoveOrder.peek() instanceof Pawn && !((Pawn) MoveOrder.peek()).isALive()) {
                 ConcretePiece killedLast = MoveOrder.pop();
                 //add the killed piece to the board
-                board[killedLast.MovesHistory.getLast().getColumn()][killedLast.MovesHistory.getLast().getRow()] = killedLast;
+                board[killedLast.MovesHistory.get(lastposition).getColumn()][killedLast.MovesHistory.get(lastposition).getRow()] = killedLast;
                 //toggle the isAlive boolean
                 ((Pawn) killedLast).setALive(true);
                 //reduceKillCount the kill count of the killer piece
@@ -582,7 +584,8 @@ public class GameLogic implements PlayableLogic
         pMovedLast.subStepCounter(calculateSteps(thisPosition, lastPosition));
 
         //delete the last move from the history
-        pMovedLast.MovesHistory.removeLast();
+        pMovedLast.MovesHistory.remove(lastposition - 1);
+
 
         //toggle the turn
         isSecondPlayerTurn = !isSecondPlayerTurn;
