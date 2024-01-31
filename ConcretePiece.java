@@ -11,10 +11,7 @@ public abstract class ConcretePiece implements Piece
     protected String type;
     private final String ID;
     protected int StepCounter;
-
     protected ArrayList<Position> MovesHistory;
-
-
     public ConcretePiece(Player owner,String ID)
     {
         this.owner = owner;

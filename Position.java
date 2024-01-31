@@ -38,7 +38,7 @@ public class Position
     }
     public String toString()
     {
-        return "(" + row + ", " + column + ")";
+        return "(" + column + ", " + row + ")";
     }
 
     public int lengthPieceWasHere()

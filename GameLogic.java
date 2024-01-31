@@ -20,7 +20,8 @@ public class GameLogic implements PlayableLogic {
     }
 
     @Override
-    public boolean move(Position a, Position b) {
+    public boolean move(Position a, Position b)
+    {
         //check if the move is valid
         if (board[a.getColumn()][a.getRow()] == null)
             return false;
@@ -79,8 +80,11 @@ public class GameLogic implements PlayableLogic {
         board[b.getColumn()][b.getRow()] = board[a.getColumn()][a.getRow()];
         board[a.getColumn()][a.getRow()] = null;
         // kill check
-        if (board[b.getColumn()][b.getRow()] instanceof Pawn) {
-            if (kill(b)) {
+        if (board[b.getColumn()][b.getRow()] instanceof Pawn)
+        {
+            if (kill(b))
+            {
+                board[b.getColumn()][b.getRow()].MovesHistory.add(b);
                 printFinish(playerTwo);
                 playerTwo.addWin();
                 reset();
@@ -335,11 +339,10 @@ public class GameLogic implements PlayableLogic {
         MoveOrder.clear();
 
         //King
-        int i = 0;
-        int j = 9;
-        board[i][j] = new King(playerOne, "k7");
-        board[i][j].MovesHistory.add(new Position(i, j));
-        piecesList.add(board[i][j]);
+
+        board[5][5] = new King(playerOne, "K7");
+        board[5][5].MovesHistory.add(new Position(5, 5));
+        piecesList.add(board[5][5]);
         //Defenders
         board[5][3] = new Pawn(playerOne, "D1");
         board[5][3].MovesHistory.add(new Position(5, 3));
